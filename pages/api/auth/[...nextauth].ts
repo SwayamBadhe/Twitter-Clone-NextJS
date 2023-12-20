@@ -1,10 +1,11 @@
+// auth folder reserved for authentication
+
 import bcrypt from 'bcrypt';
 import nextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
 import prisma from '@/libs/prismadb';
-import { use } from 'react';
 
 export default nextAuth({
   adapter: PrismaAdapter(prisma),
