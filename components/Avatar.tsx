@@ -37,7 +37,7 @@ const Avatar: React.FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
         style={{ objectFit: 'cover', borderRadius: '100%' }}
         alt="Avatar"
         onClick={onClick}
-        src={fetchedUser?.profleImage || '/images/user.png'}
+        src={fetchedUser?.profileImage || '/images/user.png'}
       />
     </div>
   );
