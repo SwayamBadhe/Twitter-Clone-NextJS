@@ -30,10 +30,10 @@ export default async function handler(
       throw new Error('Invalid ID');
     }
 
-    let updatedLikeIds = [...(post.likeIds || [])];
+    let updatedlikedIds = [...(post.likedIds || [])];
 
     if (req.method === 'POST') {
-      updatedLikeIds.push(currentUser.id);
+      updatedlikedIds.push(currentUser.id);
 
       // NOTIFICATION PART START
       try {
@@ -67,7 +67,7 @@ export default async function handler(
     }
 
     if (req.method === 'DELETE') {
-      updatedLikeIds = updatedLikeIds.filter(
+      updatedlikedIds = updatedlikedIds.filter(
         (likedId) => likedId !== currentUser?.id
       );
     }
@@ -77,7 +77,7 @@ export default async function handler(
         id: postId,
       },
       data: {
-        likeIds: updatedLikeIds,
+        likedIds: updatedlikedIds,
       },
     });
 
