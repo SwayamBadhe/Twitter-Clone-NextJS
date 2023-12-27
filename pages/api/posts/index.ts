@@ -21,6 +21,11 @@ export default async function handler(
       const { currentUser } = authResult;
       const { body } = req.body;
 
+      if (!currentUser) {
+        // Handle the case where currentUser is undefined
+        return res.status(401).json({ error: 'User not found' });
+      }
+
       const post = await prisma.post.create({
         data: {
           body,
