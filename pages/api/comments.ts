@@ -12,14 +12,24 @@ export default async function handler(
   }
 
   try {
-    const { currentUser } = await serverAuth(req, res);
+    const authResult = await serverAuth(req, res);
+
+    if (authResult.error) {
+      // Handle the authentication error, e.g., return a specific response
+      return res.status(401).json({ error: authResult.error });
+    }
+
+    const { currentUser } = authResult;
     const { body } = req.body;
     const { postId } = req.query;
 
     if (!postId || typeof postId !== 'string') {
       throw new Error('Invalid ID');
     }
-
+    if (!currentUser) {
+      // Handle the case where currentUser is undefined
+      return res.status(401).json({ error: 'User not found' });
+    }
     const comment = await prisma.comment.create({
       data: {
         body,

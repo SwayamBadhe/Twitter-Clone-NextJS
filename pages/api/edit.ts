@@ -12,12 +12,24 @@ export default async function handler(
   }
 
   try {
-    const { currentUser } = await serverAuth(req, res);
+    const authResult = await serverAuth(req, res);
+
+    if (authResult.error) {
+      // Handle the authentication error, e.g., return a specific response
+      return res.status(401).json({ error: authResult.error });
+    }
+
+    const { currentUser } = authResult;
 
     const { name, username, bio, profileImage, coverImage } = req.body;
 
     if (!name || !username) {
       throw new Error('Missing fields');
+    }
+
+    if (!currentUser) {
+      // Handle the case where currentUser is undefined
+      return res.status(401).json({ error: 'User not found' });
     }
 
     const updatedUser = await prisma.user.update({
