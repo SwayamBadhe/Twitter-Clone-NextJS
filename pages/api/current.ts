@@ -11,7 +11,14 @@ export default async function handler(
   }
 
   try {
-    const { currentUser } = await serverAuth(req, res);
+    const authResult = await serverAuth(req, res);
+
+    if (authResult.error) {
+      // Handle the authentication error, e.g., return a specific response
+      return res.status(401).json({ error: authResult.error });
+    }
+
+    const { currentUser } = authResult;
 
     return res.status(200).json(currentUser);
   } catch (error) {

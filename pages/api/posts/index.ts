@@ -11,7 +11,14 @@ export default async function handler(
 
   try {
     if (req.method === 'POST') {
-      const { currentUser } = await serverAuth(req, res);
+      const authResult = await serverAuth(req, res);
+
+      if (authResult.error) {
+        // Handle the authentication error, e.g., return a specific response
+        return res.status(401).json({ error: authResult.error });
+      }
+
+      const { currentUser } = authResult;
       const { body } = req.body;
 
       const post = await prisma.post.create({

@@ -14,7 +14,14 @@ export default async function handler(
   try {
     const { userId } = req.body;
 
-    const { currentUser } = await serverAuth(req, res);
+    const authResult = await serverAuth(req, res);
+
+    if (authResult.error) {
+      // Handle the authentication error, e.g., return a specific response
+      return res.status(401).json({ error: authResult.error });
+    }
+
+    const { currentUser } = authResult;
 
     if (!userId || typeof userId !== 'string') {
       throw new Error('Invalid ID');
@@ -62,6 +69,11 @@ export default async function handler(
       updatedFollowingIds = updatedFollowingIds.filter(
         (followingId) => followingId !== userId
       );
+    }
+
+    if (!currentUser) {
+      // Handle the case where currentUser is undefined
+      return res.status(401).json({ error: 'User not found' });
     }
 
     const updatedUser = await prisma.user.update({
