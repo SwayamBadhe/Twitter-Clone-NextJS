@@ -1,12 +1,13 @@
-import useCurrentUser from '@/hooks/useCurrentUser';
-import useLoginModal from '@/hooks/useLoginModal';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
-import LoginModal from '../modals/LoginModal';
+import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from 'react-icons/ai';
 import { formatDistanceToNowStrict } from 'date-fns';
-import Avatar from '../Avatar';
-import { AiOutlineHeart, AiOutlineMessage } from 'react-icons/ai';
 
+import useLoginModal from '@/hooks/useLoginModal';
+import useCurrentUser from '@/hooks/useCurrentUser';
+import useLike from '@/hooks/useLike';
+
+import Avatar from '../Avatar';
 interface PostItemProps {
   data: Record<string, any>;
   userId?: string;
@@ -17,31 +18,34 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
   const loginModal = useLoginModal();
 
   const { data: currentUser } = useCurrentUser();
+  const { hasLiked, toggleLike } = useLike({ postId: data.id, userId });
 
   const goToUser = useCallback(
-    (event: any) => {
-      event.stopPropagation();
-
+    (ev: any) => {
+      ev.stopPropagation();
       router.push(`/users/${data.user.id}`);
     },
     [router, data.user.id]
   );
 
-  const goToPost = useCallback(
-    (event: any) => {
-      router.push(`/posts/${data.id}`);
-    },
-    [router, data.id]
-  );
+  const goToPost = useCallback(() => {
+    router.push(`/posts/${data.id}`);
+  }, [router, data.id]);
 
   const onLike = useCallback(
-    (event: any) => {
-      event.stopPropagation();
+    async (ev: any) => {
+      ev.stopPropagation();
 
-      return loginModal.onOpen();
+      if (!currentUser) {
+        return loginModal.onOpen();
+      }
+
+      toggleLike();
     },
-    [LoginModal]
+    [loginModal, currentUser, toggleLike]
   );
+
+  const LikeIcon = hasLiked ? AiFillHeart : AiOutlineHeart;
 
   const createdAt = useMemo(() => {
     if (!data?.createdAt) {
@@ -49,7 +53,7 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
     }
 
     return formatDistanceToNowStrict(new Date(data.createdAt));
-  }, [data?.createdAt]);
+  }, [data.createdAt]);
 
   return (
     <div
@@ -69,7 +73,12 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
           <div className="flex flex-row items-center gap-2">
             <p
               onClick={goToUser}
-              className="text-white font-semibold cursor-pointer hover:underline"
+              className="
+                text-white 
+                font-semibold 
+                cursor-pointer 
+                hover:underline
+            "
             >
               {data.user.name}
             </p>
@@ -117,8 +126,8 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
                 hover:text-red-500
             "
             >
-              <AiOutlineHeart size={20} />
-              <p>{data.comments?.length}</p>
+              <LikeIcon color={hasLiked ? 'red' : ''} size={20} />
+              <p>{data.likeIds.length}</p>
             </div>
           </div>
         </div>
