@@ -42,6 +42,10 @@ A modern Twitter clone developed with Next.js, Prisma, MongoDB, and Tailwind CSS
    npx prisma generate
 
 5. Configure .env file with your MongoDB connection string
+   ```bash
+   DATABASE_URL=
+   NEXTAUTH_JWT_SECRET=
+   NEXTAUTH_SECRET=
 
 6. Run the development server
    ```bash
