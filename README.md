@@ -27,7 +27,7 @@ A modern Twitter clone developed with Next.js, Prisma, MongoDB, and Tailwind CSS
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/your-username/twitter-clone.git
+   git clone https://github.com/SwayamBadhe/Twitter-Clone-NextJS.git
 
 2. Navigate to the project directory
    ```bash
